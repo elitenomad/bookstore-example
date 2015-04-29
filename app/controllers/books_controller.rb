@@ -1,14 +1,17 @@
 class BooksController < ApplicationController
   def index
     if params[:query].present?
-      @books = Book.search(params[:query], page: params[:page])
+      @books = Book.search(params[:query].split(' ')[0], page: params[:page])
+     # @suggestions = @books.suggestions
     else
       @books = Book.all.page params[:page]
     end
   end
 
   def autocomplete
-    render json: Book.search(params[:query], autocomplete: true, limit: 10).map(&:title)
+    @book_searches = Book.search(params[:query],facets: [:name], autocomplete: true,  limit: 10).facets["name"]["terms"].sort_by{|t| t.count}.map{|t| "#{params[:query]} in #{t['term']}"}
+   # binding.pry
+    render json: @book_searches
   end
 
   def import

@@ -7,6 +7,10 @@
     .input-group-btn
       = submit_tag "Search", class: "btn btn-primary"
 
+/- if @suggestions.present?
+/  .well
+/    = @suggestions
+
 = render @books
 
 = paginate @books

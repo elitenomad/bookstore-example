@@ -1,8 +1,30 @@
 class Book < ActiveRecord::Base
   has_and_belongs_to_many :authors
   has_and_belongs_to_many :subjects
+  belongs_to :category
 
-  searchkick autocomplete: ['title']
+  searchkick autocomplete: ['title'],suggest: ['title']
+
+
+  def search_data
+    as_json only: [:title, :number_of_pages,:coverimage,:publish_date,:created_at,:updated_at],
+            include: [:category => { :only => [:id, :name] }]
+    # {
+    #     title: title,
+    #     number_of_pages: number_of_pages,
+    #     coverimage: coverimage,
+    #     publish_date: publish_date,
+    #     created_at: created_at,
+    #     updated_at: updated_at,
+    #     :category => {
+    #         :only => [:id, :name, :slug],
+    #     }
+    # }
+  end
+
+  def category_name
+    self.category.name
+  end
 
   def self.import(olid)
     client = Openlibrary::Client.new
