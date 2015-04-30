@@ -3,7 +3,11 @@ class Book < ActiveRecord::Base
   has_and_belongs_to_many :subjects
   belongs_to :category
 
-  searchkick autocomplete: ['title'],suggest: ['title']
+  searchkick({misspellings: {edit_distance: 2},
+              autocomplete: ['title'],
+              suggest: ['title'],
+              fields: ["title^9"]
+             })
 
 
   def search_data
